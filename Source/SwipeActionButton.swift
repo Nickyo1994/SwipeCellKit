@@ -35,7 +35,11 @@ class SwipeActionButton: UIButton {
     }
     
     override var intrinsicContentSize: CGSize {
+        #if swift(>=4.2)
         return CGSize(width: UIView.noIntrinsicMetric, height: contentEdgeInsets.top + alignmentRect.height + contentEdgeInsets.bottom)
+        #else
+        return CGSize(width: UIViewNoIntrinsicMetric, height: contentEdgeInsets.top + alignmentRect.height + contentEdgeInsets.bottom)
+        #endif
     }
     
     convenience init(action: SwipeAction) {
@@ -80,10 +84,17 @@ class SwipeActionButton: UIButton {
     func titleBoundingRect(with size: CGSize) -> CGRect {
         guard let title = currentTitle, let font = titleLabel?.font else { return .zero }
         
+        #if swift(>=4.2)
         return title.boundingRect(with: size,
                                   options: [.usesLineFragmentOrigin],
                                   attributes: [NSAttributedString.Key.font: font],
                                   context: nil).integral
+        #else
+        return title.boundingRect(with: size,
+                                  options: [.usesLineFragmentOrigin],
+                                  attributes: [NSAttributedStringKey.font: font],
+                                  context: nil).integral
+        #endif
     }
     
     override func titleRect(forContentRect contentRect: CGRect) -> CGRect {

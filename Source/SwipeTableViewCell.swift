@@ -53,11 +53,19 @@ open class SwipeTableViewCell: UITableViewCell {
     }
     
     /// :nodoc:
+    #if swift(>=4.2)
     override public init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         configure()
     }
+    #else
+    override public init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        configure()
+    }
+    #endif
     
     /// :nodoc:
     required public init?(coder aDecoder: NSCoder) {
@@ -123,6 +131,7 @@ open class SwipeTableViewCell: UITableViewCell {
      
         let point = convert(point, to: superview)
 
+        #if swift(>=4.2)
         if !UIAccessibility.isVoiceOverRunning {
             for cell in tableView?.swipeCells ?? [] {
                 if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
@@ -131,6 +140,16 @@ open class SwipeTableViewCell: UITableViewCell {
                 }
             }
         }
+        #else
+        if !UIAccessibilityIsVoiceOverRunning() {
+            for cell in tableView?.swipeCells ?? [] {
+                if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
+                    tableView?.hideSwipeCell()
+                    return false
+                }
+            }
+        }
+        #endif
         
         return contains(point: point)
     }

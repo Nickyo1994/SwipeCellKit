@@ -132,6 +132,7 @@ open class SwipeCollectionViewCell: UICollectionViewCell {
         
         let point = convert(point, to: superview)
         
+        #if swift(>=4.2)
         if !UIAccessibility.isVoiceOverRunning {
             for cell in collectionView?.swipeCells ?? [] {
                 if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
@@ -140,6 +141,16 @@ open class SwipeCollectionViewCell: UICollectionViewCell {
                 }
             }
         }
+        #else
+        if !UIAccessibilityIsVoiceOverRunning() {
+            for cell in collectionView?.swipeCells ?? [] {
+                if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
+                    collectionView?.hideSwipeCell()
+                    return false
+                }
+            }
+        }
+        #endif
         
         return contains(point: point)
     }
